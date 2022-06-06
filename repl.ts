@@ -8,6 +8,8 @@ import { removeGenerics } from "./remove-generics";
 
 export type ObjectField = 
 |{tag:"num", fieldName: string, value: Value}
+// new float objectfield
+|{tag:"float", fieldName: string, value: Value}
 |{tag:"bool", fieldName: string, value: Value}
 |{tag:"none", fieldName: string, value: Value}
 |{tag:"object", fieldName: string, value: Value, objectTrackList: Array<ObjectField>}
@@ -64,7 +66,7 @@ export class BasicREPL {
 
   trackObject(result: Value, heapView: Int32Array): Array<ObjectField>{
     let list = new Array<ObjectField>();
-    if(result.tag === "bool" || result.tag === "none" || result.tag === "num" || result.tag === "TypeVar"){
+    if(result.tag === "bool" || result.tag === "none" || result.tag === "num" || result.tag == "float" || result.tag === "TypeVar"){
       return list;
     }
 
@@ -77,6 +79,9 @@ export class BasicREPL {
         case "number":
           list.push({tag:"num", fieldName: key, value: {tag: "num", value: BigInt(heapView.at(index))}});
           break;
+        case "float": 
+          list.push({tag:"float", fieldName: key, value: {tag: "float", value: BigInt(heapView.at(index)), decimal: BigInt(0)}});
+          break; 
         case "bool":
           list.push({tag:"bool", fieldName: key, value: {tag: "bool", value: Boolean(heapView.at(index))}});
           break;

@@ -2,7 +2,7 @@ import * as AST from './ast';
 import * as IR from './ir';
 import { Type, SourceLocation } from './ast';
 import { GlobalEnv } from './compiler';
-import { NUM, BOOL, NONE, CLASS } from "./utils";
+import { NUM, BOOL, NONE, CLASS, FLOAT } from "./utils";
 
 const nameCounters : Map<string, bigint> = new Map();
 function generateName(base : string) : string {
@@ -76,6 +76,8 @@ function literalToVal(lit: AST.Literal<[Type, SourceLocation]>) : IR.Value<[Type
     switch(lit.tag) {
         case "num":
             return { ...lit, value: BigInt(lit.value), a:[NUM, lit.a[1]] }
+        case "float": 
+            return { ...lit, value: BigInt(lit.value), decimal:BigInt(lit.decimal),  a:[FLOAT, lit.a[1]] }
         case "bool":
             return {...lit, a:[BOOL, lit.a[1]]}
         case "none":

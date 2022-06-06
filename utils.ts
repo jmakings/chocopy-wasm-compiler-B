@@ -36,6 +36,7 @@ export function PyNone(): Value {
 }
 
 export const NUM : Type = {tag: "number"};
+export const FLOAT: Type = {tag: "float"}; // float added
 export const BOOL : Type = {tag: "bool"};
 export const NONE : Type = {tag: "none"};
 export const TYPE_VAR : Type = {tag: "type-var"};

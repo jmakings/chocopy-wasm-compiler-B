@@ -3,6 +3,7 @@
 // export enum Type {NUM, BOOL, NONE, OBJ}; 
 export type Type =
   | {tag: "number"}
+  | {tag: "float"}
   | {tag: "bool"}
   | {tag: "none"}
   | {tag: "list", type: Type}
@@ -55,7 +56,8 @@ export type Expr<A> =
   | {  a?: A, tag: "non-paren-vals", values: Array<Expr<A>> }
 
 export type Literal<A> = 
-    { a?: A, tag: "num", value: bigint }
+    { a?: A, tag: "num", value: bigint}
+  | { a?: A, tag: "float", value: bigint, decimal:bigint }
   | { a?: A, tag: "bool", value: boolean }
   | { a?: A, tag: "none" }
   | { a?: A, tag: "TypeVar" }

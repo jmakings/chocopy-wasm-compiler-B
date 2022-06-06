@@ -3,11 +3,12 @@ import { BasicREPL } from "./repl";
 import { importObject, addLibs  } from "./tests/import-object.test";
 import { stringifyTree } from './treeprinter'
 import {parser} from 'lezer-python'
+import {lowerProgram} from './lower'
 
 // entry point for debugging
 async function debug() {
   var source = `
-  factorial(45)
+    x:float = 5.5
   `
 
   const t = parser.parse(source);
@@ -38,6 +39,7 @@ async function debug() {
   const repl = new BasicREPL(await addLibs());
   const result = repl.tc(source);
   console.log(result);
+  //const lower = lowerProgram()
   const result2 = repl.run(source).then(result2 => {
     console.log(result);
   })

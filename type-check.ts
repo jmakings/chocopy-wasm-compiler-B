@@ -1,7 +1,7 @@
 
 import { table } from 'console';
 import { Stmt, Expr, Type, UniOp, BinOp, Literal, Program, FunDef, VarInit, Class, SourceLocation, DestructureLHS } from './ast';
-import { NUM, BOOL, NONE, CLASS } from './utils';
+import { NUM, BOOL, NONE, CLASS, FLOAT } from './utils';
 import { emptyEnv } from './compiler';
 import { TypeCheckError } from './error_reporting'
 import { BuiltinLib } from './builtinlib';
@@ -509,6 +509,7 @@ export function tcExpr(env : GlobalTypeEnv, locals : LocalTypeEnv, expr : Expr<S
         case BinOp.IDiv:
         case BinOp.Mod:
           if(equalType(tLeft.a[0], NUM) && equalType(tRight.a[0], NUM)) { return {...tBin, a: [NUM, expr.a]}}
+          else if (equalType(tLeft.a[0], FLOAT) && equalType(tRight.a[0], FLOAT)) { return {...tBin, a: [FLOAT, expr.a]}}
           else { throw new TypeCheckError("Type mismatch for numeric op" + expr.op, expr.a); }
         case BinOp.Eq:
         case BinOp.Neq:
@@ -536,6 +537,7 @@ export function tcExpr(env : GlobalTypeEnv, locals : LocalTypeEnv, expr : Expr<S
       switch(expr.op) {
         case UniOp.Neg:
           if(equalType(tExpr.a[0], NUM)) { return tUni }
+          else if (equalType(tExpr.a[0], FLOAT)) { return tUni }
           else { throw new TypeCheckError("Type mismatch for op" + expr.op, expr.a);}
         case UniOp.Not:
           if(equalType(tExpr.a[0], BOOL)) { return tUni }
@@ -815,6 +817,9 @@ export function tcLiteral(literal : Literal<SourceLocation>) : Literal<[Type, So
       break;
     case "num":
       typ =  NUM;
+      break;
+    case "float": 
+      typ = FLOAT; 
       break;
     case "none":
       typ =  NONE;

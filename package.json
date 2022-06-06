@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.14",
     "@types/chai-as-promised": "^7.1.5",
+    "@types/codemirror": "^5.60.5",
     "@types/mocha": "^8.2.0",
     "@types/node": "^17.0.23",
     "chai": "^4.2.0",

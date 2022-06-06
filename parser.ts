@@ -1,7 +1,7 @@
 import {parser} from "lezer-python";
 import { TreeCursor} from "lezer-tree";
 import { Program, Expr, Stmt, UniOp, BinOp, Parameter, Type, FunDef, VarInit, Class, Literal, SourceLocation, DestructureLHS, AssignTarget } from "./ast";
-import { NUM, BOOL, NONE, CLASS, TYPE_VAR } from "./utils";
+import { NUM, BOOL, NONE, CLASS, TYPE_VAR, FLOAT } from "./utils";
 import { stringifyTree } from "./treeprinter";
 import { ParseError} from "./error_reporting";
 
@@ -22,12 +22,43 @@ function getSourceLocation(c : TreeCursor, s : string) : SourceLocation {
 export function traverseLiteral(c : TreeCursor, s : string) : Literal<SourceLocation> {
   var location = getSourceLocation(c, s);
   switch(c.type.name) {
-    case "Number":
+    case "Number": 
+      var num = s.substring(c.from, c.to) // get number as string
+      var val2 = -BigInt(1)
+
+      // loop over each character, looking for the decimal point
+      // If the decimal is found, split the string into left and right sides of 
+      // decimal
+      for (var i = 1; i <= num.length; i++) { 
+        if (num.substring(i-1,i) === ".") {
+          var val1 = BigInt(num.substring(0,i-1)); 
+          val2 = BigInt(num.substring(i,num.length));
+          break
+        }
+      }
+      // if there is no right hand number, return int
+      // else, return float
+      if (val2 === -BigInt(1)) { 
+        return {
+          tag: "num",
+          value: BigInt(s.substring(c.from, c.to)),
+          a: location,
+        }
+      }
+      return {
+        tag: "float",
+        value: val1,
+        decimal: val2,
+        a: location,
+      }
+   /*
+    case "Number": 
       return {
         tag: "num",
         value: BigInt(s.substring(c.from, c.to)),
         a: location,
       }
+      */ 
     case "Boolean":
       return {
         tag: "bool",
@@ -743,6 +774,8 @@ export function traverseType(c : TreeCursor, s : string) : Type {
   let name = s.substring(c.from, c.to);
   switch(name) {
     case "int": return NUM;
+    // float added here 
+    case "float": return FLOAT; 
     case "bool": return BOOL;
     case "TypeVar": return TYPE_VAR;
     default:

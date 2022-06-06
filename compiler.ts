@@ -244,6 +244,47 @@ function codeGenValue(val: Value<[Type, SourceLocation]>, env: GlobalEnv): Array
       // We call $alloc (n + 1) times, call $store n times, and return 1 time.
       prefix += allocation + storeSize;
       return [prefix + generatedString];
+    case "float": 
+      var generatedString = ``;
+      var curVal = val.value;
+      var dec = val.decimal
+      var i = 2; // the first and second field preserved for size, split
+      const base2 = BigInt(2 ** 31);
+
+      // use a do-while loop to address the edge case of initial curVal == 0
+      do {
+        var remainder = curVal % base2;
+
+        generatedString += `(i32.const ${i})\n(i32.const ${remainder})\n(call $store)`; // call the store function with address, offset, and val
+
+        i += 1; // next iteration
+        curVal /= base2; // default to use floor() 
+      } while (curVal > 0);
+
+      var j = i-2; // this is where the "split" is, between the left and right hand sides of decimal
+
+      do {
+        var remainder = dec % base2;
+
+        generatedString += `(i32.const ${i})\n(i32.const ${remainder})\n(call $store)`; // call the store function with address, offset, and val
+
+        i += 1; // next iteration
+        dec /= base2; // default to use floor() 
+      } while (dec > 0);
+
+      // "i" represents the number of fields
+      var prefix = ``;
+      var allocation = `(i32.const ${i})\n(call $alloc)\n`; // allocate spaces for the number
+      // store the number of digits of the number at the first field, and "split" at second field
+      var storeSize = `(i32.const 0)\n(i32.const ${i - 2})\n(call $store)\n(i32.const 1)\n(i32.const ${j})\n(call $store)\n`; 
+      
+      while (i > 0) {
+        prefix += `(i32.const 0)\n(call $alloc)\n`; // prepare the addresses for the store calls
+        i -= 1;
+      }
+      // We call $alloc (n + 1) times, call $store n times, and return 1 time.
+      prefix += allocation + storeSize;
+      return [prefix + generatedString];
     case "wasmint":
       return ["(i32.const " + val.value + ")"];
     case "bool":
