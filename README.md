@@ -18,7 +18,7 @@ https://ucsd-cse231-s22.github.io/chocopy-wasm-compiler-B/
 The compiler at this link contains most of the features, however integers larger than 32 bits are not supported in this version. (This is what our group worked on).
 
 ### Description: 
-The primary goal of this project was to create a compiler that could translate typed Python3 code [ChocoPy](https://chocopy.org/) into [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) in the browser.
+The primary goal of this project was to create a compiler that could translate typed Python3 code ([ChocoPy](https://chocopy.org/)) into [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) in the browser.
 For language specification, refer to the ChocoPy documentation [here](https://chocopy.org/). Base ChocoPy language will run on this application, however other groups added additional Python features such as lists, sets, for loops, comprehensions, big numbers, etc. 
 ### Our work: 
 Our group's contribution to the project was to provide support for the use of arbitrarily large numbers. WebAssembly's default number types support 32 and 64 bit integers and floats, however beyond this was up to our own implementation.
